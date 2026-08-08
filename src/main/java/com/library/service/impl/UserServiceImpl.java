@@ -27,16 +27,12 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User getUserById(Long id) {
-
-        return userRepository.findById(id)
-                .orElse(null);
+        return userRepository.findById(id).orElse(null);
     }
 
     @Override
     public User updateUser(Long id, User user) {
-
-        User existingUser = userRepository.findById(id)
-                .orElse(null);
+        User existingUser = userRepository.findById(id).orElse(null);
 
         if (existingUser == null) {
             return null;
@@ -52,31 +48,25 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User activateUser(Long id) {
-
-        User user = userRepository.findById(id)
-                .orElse(null);
+        User user = userRepository.findById(id).orElse(null);
 
         if (user == null) {
             return null;
         }
 
         user.setStatus("ACTIVE");
-
         return userRepository.save(user);
     }
 
     @Override
     public User deactivateUser(Long id) {
-
-        User user = userRepository.findById(id)
-                .orElse(null);
+        User user = userRepository.findById(id).orElse(null);
 
         if (user == null) {
             return null;
         }
 
         user.setStatus("INACTIVE");
-
         return userRepository.save(user);
     }
 }

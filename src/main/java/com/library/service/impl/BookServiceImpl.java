@@ -27,16 +27,12 @@ public class BookServiceImpl implements BookService {
 
     @Override
     public Book getBookById(Long id) {
-
-        return bookRepository.findById(id)
-                .orElse(null);
+        return bookRepository.findById(id).orElse(null);
     }
 
     @Override
     public Book updateBook(Long id, Book book) {
-
-        Book existingBook = bookRepository.findById(id)
-                .orElse(null);
+        Book existingBook = bookRepository.findById(id).orElse(null);
 
         if (existingBook == null) {
             return null;
@@ -58,9 +54,7 @@ public class BookServiceImpl implements BookService {
 
     @Override
     public void deleteBook(Long id) {
-
-        Book book = bookRepository.findById(id)
-                .orElse(null);
+        Book book = bookRepository.findById(id).orElse(null);
 
         if (book != null) {
             book.setStatus("INACTIVE");

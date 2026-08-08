@@ -18,185 +18,86 @@ import jakarta.servlet.http.HttpServletRequest;
 @RequestMapping("/books")
 public class BookController {
 
-    private static final Logger logger =
-            LoggerFactory.getLogger(BookController.class);
+    private static final Logger logger = LoggerFactory.getLogger(BookController.class);
 
     @Autowired
     private BookService bookService;
 
-
-    // =========================
-    // ADD BOOK
-    // =========================
-
     @PostMapping
-    public ResponseEntity<?> saveBook(
-            @RequestBody Book book,
-            HttpServletRequest request) {
+    public ResponseEntity<?> saveBook(@RequestBody Book book, HttpServletRequest request) {
+        logger.info("Creating book: {}", book.getTitle());
 
-        logger.info(
-                "Creating book: {}",
-                book.getTitle());
-
-        Book savedBook =
-                bookService.saveBook(book);
+        Book savedBook = bookService.saveBook(book);
 
         if (savedBook == null) {
-
-            logger.warn(
-                    "Book creation failed");
-
-            return ResponseEntity
-                    .badRequest()
-                    .body(new ErrorResponse(
-                            "Book could not be created",
-                            request.getRequestURI()));
+            logger.warn("Book creation failed");
+            return ResponseEntity.badRequest()
+                    .body(new ErrorResponse("Book could not be created", request.getRequestURI()));
         }
 
-        logger.info(
-                "Book created successfully with id: {}",
-                savedBook.getId());
-
-        return ResponseEntity
-                .status(201)
-                .body(savedBook);
+        logger.info("Book created successfully with id: {}", savedBook.getId());
+        return ResponseEntity.status(201).body(savedBook);
     }
-
-
-    // =========================
-    // GET ALL BOOKS
-    // =========================
 
     @GetMapping
     public ResponseEntity<List<Book>> getAllBooks() {
+        logger.info("Fetching all books");
 
-        logger.info(
-                "Fetching all books");
+        List<Book> books = bookService.getAllBooks();
 
-        List<Book> books =
-                bookService.getAllBooks();
-
-        logger.info(
-                "Total books found: {}",
-                books.size());
-
+        logger.info("Total books found: {}", books.size());
         return ResponseEntity.ok(books);
     }
 
-
-    // =========================
-    // GET BOOK BY ID
-    // =========================
-
     @GetMapping("/{id}")
-    public ResponseEntity<?> getBookById(
-            @PathVariable Long id,
-            HttpServletRequest request) {
+    public ResponseEntity<?> getBookById(@PathVariable Long id, HttpServletRequest request) {
+        logger.info("Fetching book with id: {}", id);
 
-        logger.info(
-                "Fetching book with id: {}",
-                id);
-
-        Book book =
-                bookService.getBookById(id);
+        Book book = bookService.getBookById(id);
 
         if (book == null) {
-
-            logger.warn(
-                    "Book not found with id: {}",
-                    id);
-
-            return ResponseEntity
-                    .status(404)
-                    .body(new ErrorResponse(
-                            "Book not found",
-                            request.getRequestURI()));
+            logger.warn("Book not found with id: {}", id);
+            return ResponseEntity.status(404)
+                    .body(new ErrorResponse("Book not found", request.getRequestURI()));
         }
 
-        logger.info(
-                "Book found with id: {}",
-                id);
-
+        logger.info("Book found with id: {}", id);
         return ResponseEntity.ok(book);
     }
 
-
-    // =========================
-    // UPDATE BOOK
-    // =========================
-
     @PutMapping("/{id}")
-    public ResponseEntity<?> updateBook(
-            @PathVariable Long id,
-            @RequestBody Book book,
-            HttpServletRequest request) {
+    public ResponseEntity<?> updateBook(@PathVariable Long id, @RequestBody Book book,
+                                        HttpServletRequest request) {
+        logger.info("Updating book with id: {}", id);
 
-        logger.info(
-                "Updating book with id: {}",
-                id);
-
-        Book updatedBook =
-                bookService.updateBook(id, book);
+        Book updatedBook = bookService.updateBook(id, book);
 
         if (updatedBook == null) {
-
-            logger.warn(
-                    "Book not found with id: {}",
-                    id);
-
-            return ResponseEntity
-                    .status(404)
-                    .body(new ErrorResponse(
-                            "Book not found",
-                            request.getRequestURI()));
+            logger.warn("Book not found with id: {}", id);
+            return ResponseEntity.status(404)
+                    .body(new ErrorResponse("Book not found", request.getRequestURI()));
         }
 
-        logger.info(
-                "Book updated successfully with id: {}",
-                id);
-
+        logger.info("Book updated successfully with id: {}", id);
         return ResponseEntity.ok(updatedBook);
     }
 
-
-    // =========================
-    // DELETE / DEACTIVATE BOOK
-    // =========================
-
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> deleteBook(
-            @PathVariable Long id,
-            HttpServletRequest request) {
+    public ResponseEntity<?> deleteBook(@PathVariable Long id, HttpServletRequest request) {
+        logger.info("Deactivating book with id: {}", id);
 
-        logger.info(
-                "Deactivating book with id: {}",
-                id);
-
-        Book book =
-                bookService.getBookById(id);
+        Book book = bookService.getBookById(id);
 
         if (book == null) {
-
-            logger.warn(
-                    "Book not found with id: {}",
-                    id);
-
-            return ResponseEntity
-                    .status(404)
-                    .body(new ErrorResponse(
-                            "Book not found",
-                            request.getRequestURI()));
+            logger.warn("Book not found with id: {}", id);
+            return ResponseEntity.status(404)
+                    .body(new ErrorResponse("Book not found", request.getRequestURI()));
         }
 
         bookService.deleteBook(id);
 
-        logger.info(
-                "Book deactivated successfully with id: {}",
-                id);
-
+        logger.info("Book deactivated successfully with id: {}", id);
         return ResponseEntity.ok(
-                new ErrorResponse(
-                        "Book deactivated successfully",
-                        request.getRequestURI()));
+                new ErrorResponse("Book deactivated successfully", request.getRequestURI()));
     }
 }

@@ -16,111 +16,56 @@ import com.library.service.FineService;
 @RequestMapping("/fines")
 public class FineController {
 
-    private static final Logger logger =
-            LoggerFactory.getLogger(FineController.class);
+    private static final Logger logger = LoggerFactory.getLogger(FineController.class);
 
     @Autowired
     private FineService fineService;
 
-
-    // =========================
-    // CALCULATE FINE
-    // =========================
-
     @PostMapping("/calculate/{borrowId}")
-    public ResponseEntity<?> calculateFine(
-            @PathVariable Long borrowId) {
+    public ResponseEntity<?> calculateFine(@PathVariable Long borrowId) {
+        logger.info("Fine calculation request for Borrow ID: {}", borrowId);
 
-        logger.info(
-                "Fine calculation request for Borrow ID: {}",
-                borrowId);
-
-        Fine fine =
-                fineService.calculateFine(borrowId);
+        Fine fine = fineService.calculateFine(borrowId);
 
         if (fine == null) {
-
-            logger.info(
-                    "No fine for Borrow ID: {}",
-                    borrowId);
-
+            logger.info("No fine for Borrow ID: {}", borrowId);
             return ResponseEntity.ok(
-                    new ErrorResponse(
-                            "No fine for this borrow",
-                            "/fines/calculate/" + borrowId));
+                    new ErrorResponse("No fine for this borrow", "/fines/calculate/" + borrowId));
         }
 
-        logger.info(
-                "Fine calculated successfully for Borrow ID: {}",
-                borrowId);
-
+        logger.info("Fine calculated successfully for Borrow ID: {}", borrowId);
         return ResponseEntity.ok(fine);
     }
-
-
-    // =========================
-    // GET FINE BY BORROW ID
-    // =========================
 
     @GetMapping("/borrow/{borrowId}")
-    public ResponseEntity<?> getFine(
-            @PathVariable Long borrowId) {
+    public ResponseEntity<?> getFine(@PathVariable Long borrowId) {
+        logger.info("Fetching fine for Borrow ID: {}", borrowId);
 
-        logger.info(
-                "Fetching fine for Borrow ID: {}",
-                borrowId);
-
-        Fine fine =
-                fineService.getFineByBorrowId(borrowId);
+        Fine fine = fineService.getFineByBorrowId(borrowId);
 
         if (fine == null) {
-
-            logger.warn(
-                    "Fine not found for Borrow ID: {}",
-                    borrowId);
-
-            return ResponseEntity
-                    .status(404)
-                    .body(new ErrorResponse(
-                            "Fine not found",
-                            "/fines/borrow/" + borrowId));
+            logger.warn("Fine not found for Borrow ID: {}", borrowId);
+            return ResponseEntity.status(404)
+                    .body(new ErrorResponse("Fine not found", "/fines/borrow/" + borrowId));
         }
 
-        logger.info(
-                "Fine found for Borrow ID: {}",
-                borrowId);
-
+        logger.info("Fine found for Borrow ID: {}", borrowId);
         return ResponseEntity.ok(fine);
     }
-
-
-    // =========================
-    // GET ALL FINES
-    // =========================
 
     @GetMapping
     public ResponseEntity<List<Fine>> getAllFines() {
+        logger.info("Fetching all fines");
 
-        logger.info(
-                "Fetching all fines");
+        List<Fine> fines = fineService.getAllFines();
 
-        List<Fine> fines =
-                fineService.getAllFines();
-
-        logger.info(
-                "Total fines found: {}",
-                fines.size());
-
+        logger.info("Total fines found: {}", fines.size());
         return ResponseEntity.ok(fines);
     }
 
-
     @PutMapping("/{id}/pay")
-    public ResponseEntity<Fine> payFine(
-            @PathVariable Long id) {
-
+    public ResponseEntity<Fine> payFine(@PathVariable Long id) {
         Fine fine = fineService.payFine(id);
-
         return ResponseEntity.ok(fine);
     }
 }

@@ -15,164 +15,85 @@ import com.library.service.BorrowService;
 @RequestMapping("/borrows")
 public class BorrowController {
 
-    private static final Logger logger =
-            LoggerFactory.getLogger(BorrowController.class);
+    private static final Logger logger = LoggerFactory.getLogger(BorrowController.class);
 
     @Autowired
     private BorrowService borrowService;
 
-
-    // =========================
-    // ISSUE BOOK
-    // =========================
-
     @PostMapping
-    public ResponseEntity<BorrowRecord> issueBook(
-            @RequestBody BorrowRecord borrowRecord) {
+    public ResponseEntity<BorrowRecord> issueBook(@RequestBody BorrowRecord borrowRecord) {
+        logger.info("Issue request received. User ID: {}, Book ID: {}",
+                borrowRecord.getUserId(), borrowRecord.getBookId());
 
-        logger.info(
-                "Issue request received. User ID: {}, Book ID: {}",
-                borrowRecord.getUserId(),
-                borrowRecord.getBookId());
-
-        BorrowRecord savedBorrow =
-                borrowService.issueBook(borrowRecord);
+        BorrowRecord savedBorrow = borrowService.issueBook(borrowRecord);
 
         if (savedBorrow == null) {
-
             logger.warn("Book issue failed");
-
             return ResponseEntity.badRequest().build();
         }
 
-        logger.info(
-                "Book issued successfully. Borrow ID: {}",
-                savedBorrow.getId());
-
+        logger.info("Book issued successfully. Borrow ID: {}", savedBorrow.getId());
         return ResponseEntity.status(201).body(savedBorrow);
     }
 
-
-    // =========================
-    // GET ALL BORROWS
-    // =========================
-
     @GetMapping
     public ResponseEntity<List<BorrowRecord>> getAllBorrows() {
-
         logger.info("Fetching all borrow records");
 
-        List<BorrowRecord> borrows =
-                borrowService.getAllBorrows();
+        List<BorrowRecord> borrows = borrowService.getAllBorrows();
 
         return ResponseEntity.ok(borrows);
     }
 
-
-    // =========================
-    // GET BORROW BY ID
-    // =========================
-
     @GetMapping("/{id}")
-    public ResponseEntity<BorrowRecord> getBorrowById(
-            @PathVariable Long id) {
-
+    public ResponseEntity<BorrowRecord> getBorrowById(@PathVariable Long id) {
         logger.info("Fetching borrow record: {}", id);
 
-        BorrowRecord borrowRecord =
-                borrowService.getBorrowById(id);
+        BorrowRecord borrowRecord = borrowService.getBorrowById(id);
 
         if (borrowRecord == null) {
-
-            logger.warn(
-                    "Borrow record not found: {}",
-                    id);
-
+            logger.warn("Borrow record not found: {}", id);
             return ResponseEntity.notFound().build();
         }
 
         return ResponseEntity.ok(borrowRecord);
     }
 
-
-    // =========================
-    // RETURN BOOK
-    // =========================
-
     @PutMapping("/{id}/return")
-    public ResponseEntity<BorrowRecord> returnBook(
-            @PathVariable Long id) {
+    public ResponseEntity<BorrowRecord> returnBook(@PathVariable Long id) {
+        logger.info("Return request received for Borrow ID: {}", id);
 
-        logger.info(
-                "Return request received for Borrow ID: {}",
-                id);
-
-        BorrowRecord returnedBorrow =
-                borrowService.returnBook(id);
+        BorrowRecord returnedBorrow = borrowService.returnBook(id);
 
         if (returnedBorrow == null) {
-
-            logger.warn(
-                    "Book return failed for Borrow ID: {}",
-                    id);
-
+            logger.warn("Book return failed for Borrow ID: {}", id);
             return ResponseEntity.badRequest().build();
         }
 
-        logger.info(
-                "Book returned successfully. Borrow ID: {}",
-                id);
-
+        logger.info("Book returned successfully. Borrow ID: {}", id);
         return ResponseEntity.ok(returnedBorrow);
     }
 
-
-    // =========================
-    // RENEW BOOK
-    // =========================
-
     @PutMapping("/{id}/renew")
-    public ResponseEntity<BorrowRecord> renewBook(
-            @PathVariable Long id) {
+    public ResponseEntity<BorrowRecord> renewBook(@PathVariable Long id) {
+        logger.info("Renew request received for Borrow ID: {}", id);
 
-        logger.info(
-                "Renew request received for Borrow ID: {}",
-                id);
-
-        BorrowRecord renewedBorrow =
-                borrowService.renewBook(id);
+        BorrowRecord renewedBorrow = borrowService.renewBook(id);
 
         if (renewedBorrow == null) {
-
-            logger.warn(
-                    "Book renewal failed for Borrow ID: {}",
-                    id);
-
+            logger.warn("Book renewal failed for Borrow ID: {}", id);
             return ResponseEntity.badRequest().build();
         }
 
-        logger.info(
-                "Book renewed successfully. Borrow ID: {}",
-                id);
-
+        logger.info("Book renewed successfully. Borrow ID: {}", id);
         return ResponseEntity.ok(renewedBorrow);
     }
 
-
-    // =========================
-    // USER BORROW HISTORY
-    // =========================
-
     @GetMapping("/user/{userId}")
-    public ResponseEntity<List<BorrowRecord>> getUserBorrowHistory(
-            @PathVariable Long userId) {
+    public ResponseEntity<List<BorrowRecord>> getUserBorrowHistory(@PathVariable Long userId) {
+        logger.info("Fetching borrow history for User ID: {}", userId);
 
-        logger.info(
-                "Fetching borrow history for User ID: {}",
-                userId);
-
-        List<BorrowRecord> borrows =
-                borrowService.getUserBorrowHistory(userId);
+        List<BorrowRecord> borrows = borrowService.getUserBorrowHistory(userId);
 
         return ResponseEntity.ok(borrows);
     }

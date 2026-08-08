@@ -12,7 +12,5 @@ public interface BorrowRepository extends JpaRepository<BorrowRecord, Long> {
 
     List<BorrowRecord> findByUserId(Long userId);
 
-    List<BorrowRecord> findByUserIdAndBookIdAndReturnedFalse(
-            Long userId,
-            Long bookId);
+    List<BorrowRecord> findByUserIdAndBookIdAndReturnedFalse(Long userId, Long bookId);
 }
