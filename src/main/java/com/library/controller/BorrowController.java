@@ -8,6 +8,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import org.springframework.security.core.Authentication;
+import com.library.entity.User;
+import com.library.service.UserService;
+
 import com.library.entity.BorrowRecord;
 import com.library.service.BorrowService;
 
@@ -20,6 +24,9 @@ public class BorrowController {
 
     @Autowired
     private BorrowService borrowService;
+
+    @Autowired
+    private UserService userService;
 
 
     // =========================
@@ -165,11 +172,29 @@ public class BorrowController {
 
     @GetMapping("/user/{userId}")
     public ResponseEntity<List<BorrowRecord>> getUserBorrowHistory(
-            @PathVariable Long userId) {
+            @PathVariable Long userId,
+            Authentication authentication) {
 
-        logger.info(
-                "Fetching borrow history for User ID: {}",
-                userId);
+        logger.info("Fetching borrow history for User ID: {}", userId);
+
+        String loggedInEmail = authentication.getName();
+
+        User loggedInUser = userService.getUserByEmail(loggedInEmail);
+
+        if (loggedInUser == null) {
+            return ResponseEntity.notFound().build();
+        }
+
+        boolean isAdmin = "ADMIN".equals(loggedInUser.getRole());
+
+        if (!isAdmin && !loggedInUser.getId().equals(userId)) {
+            logger.warn(
+                    "User {} attempted to access borrow history of User {}",
+                    loggedInUser.getId(),
+                    userId);
+
+            return ResponseEntity.status(403).build();
+        }
 
         List<BorrowRecord> borrows =
                 borrowService.getUserBorrowHistory(userId);
