@@ -11,4 +11,6 @@ public interface FineService {
     Fine getFineByBorrowId(Long borrowId);
 
     List<Fine> getAllFines();
+
+    Fine payFine(Long id);
 }

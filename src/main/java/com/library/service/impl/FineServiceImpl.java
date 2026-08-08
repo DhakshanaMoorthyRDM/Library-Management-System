@@ -202,4 +202,23 @@ public class FineServiceImpl implements FineService {
 
         return fines;
     }
+
+    @Override
+    public Fine payFine(Long id) {
+
+        Fine fine = fineRepository.findById(id)
+                .orElse(null);
+
+        if (fine == null) {
+            throw new BorrowException("Fine not found");
+        }
+
+        if (Boolean.TRUE.equals(fine.getPaid())) {
+            throw new BorrowException("Fine is already paid");
+        }
+
+        fine.setPaid(true);
+
+        return fineRepository.save(fine);
+    }
 }

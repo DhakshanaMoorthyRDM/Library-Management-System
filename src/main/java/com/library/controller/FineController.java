@@ -113,4 +113,14 @@ public class FineController {
 
         return ResponseEntity.ok(fines);
     }
+
+
+    @PutMapping("/{id}/pay")
+    public ResponseEntity<Fine> payFine(
+            @PathVariable Long id) {
+
+        Fine fine = fineService.payFine(id);
+
+        return ResponseEntity.ok(fine);
+    }
 }

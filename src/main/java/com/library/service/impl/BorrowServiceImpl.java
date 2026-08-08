@@ -3,6 +3,7 @@ package com.library.service.impl;
 import java.time.LocalDate;
 import java.util.List;
 
+import com.library.service.FineService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,6 +33,9 @@ public class BorrowServiceImpl implements BorrowService {
 
     @Autowired
     private BookRepository bookRepository;
+
+    @Autowired
+    private FineService fineService;
 
 
     // =========================
@@ -276,6 +280,7 @@ public class BorrowServiceImpl implements BorrowService {
                 book.getAvailableCopies() + 1);
 
         bookRepository.save(book);
+        fineService.calculateFine(id);
 
         logger.info(
                 "Book returned successfully. Borrow ID: {}, Book ID: {}",
